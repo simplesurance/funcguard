@@ -34,7 +34,7 @@ funcguard -config funcguard.yml ./...
 ```yaml
 rules:
     - function: (*database/sql.DB).Begin
-      error: use context-aware method BeginTx instead
+      error: use context-aware method BeginTx instead of Begin
     - function: (*database/sql.DB).Exec
       error: use context-aware method ExecContext instead of Exec
     - function: (*database/sql.DB).Ping
