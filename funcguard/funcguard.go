@@ -26,7 +26,7 @@ func NewAnalyzer() *Analyzer {
 	result := Analyzer{
 		Analyzer: &analysis.Analyzer{
 			Name:  "funcguard",
-			Doc:   "Report usages of blocked functions",
+			Doc:   "Report usages of prohibited functions",
 			URL:   "https://github.com/simplesurance/funcguard",
 			Flags: *params.flagSet,
 		},
