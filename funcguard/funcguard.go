@@ -14,9 +14,11 @@ type Analyzer struct {
 	cfg   *Config
 	rules map[string]string
 
-	parseCmdLineFlags bool
-	writeCfgPath      string
-	configPath        string
+	cmdLineFlags struct {
+		parseFlags   bool
+		writeCfgPath string
+		configPath   string
+	}
 
 	doNothing bool
 	lock      sync.Mutex
