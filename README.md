@@ -23,13 +23,7 @@ funcguard -write-cfg funcguard.yml ./...
 (The command must be run in a directory containing `.go` files, despite if files
 will be analyzed.)
 
-### Run with Custom Rules from Configuration Files
-
-```sh
-funcguard -config funcguard.yml ./...
-```
-
-## Default Configuration
+### Default Configuration
 
 ```yaml
 rules:
@@ -71,4 +65,18 @@ rules:
       error-msg: use context-aware http.NewRequestWithContext method instead
     - function-path: (*net/http.Client).PostForm
       error-msg: use context-aware http.NewRequestWithContext method instead
+```
+
+### Run with Custom Rules from Configuration Files
+
+```sh
+funcguard -config funcguard.yml ./...
+```
+
+A custom configuration to only forbid the use of `fmt.Println` could be:
+
+```yaml
+rules:
+    - function-path: fmt.Println
+      error-msg: fmt.Println is forbidden
 ```
