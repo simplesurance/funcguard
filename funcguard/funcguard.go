@@ -42,11 +42,11 @@ func NewAnalyzer(opts ...Option) (*Analyzer, error) {
 		opt(&result)
 	}
 
-	if result.cfg != nil && result.parseCmdLineFlags {
-		return nil, fmt.Errorf("only one of WithConfig() or WithCmdlineFlags() can be passed")
-	}
-
-	if result.configPath == "" && (result.cfg == nil || len(result.cfg.Rules) == 0) {
+	if !result.cmdLineFlags.parseFlags && (result.cfg == nil || len(result.cfg.Rules) == 0) {
+		// When the linter is invoked via SingleChecker, the the
+		// cmdLineFlags are not set yet, only when run() is invoked.
+		// invoked. Therefore we can not use default config when
+		// cmdLineFlags.configPath is empty here.
 		result.cfg = &defaultConfig
 		result.logf("Using default config")
 	}
