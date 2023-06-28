@@ -7,5 +7,10 @@ import (
 )
 
 func Test(t *testing.T) {
-	analysistest.Run(t, analysistest.TestData(), NewAnalyzer().Analyzer)
+	a, err := NewAnalyzer()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	analysistest.Run(t, analysistest.TestData(), a.Analyzer)
 }

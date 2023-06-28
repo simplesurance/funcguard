@@ -5,9 +5,19 @@ import (
 
 	"github.com/simplesurance/funcguard/funcguard"
 
+	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/analysis/singlechecker"
 )
 
 func main() {
-	singlechecker.Main(funcguard.NewAnalyzer().Analyzer)
+	singlechecker.Main(mustNewSingleCheckerAnalyzer())
+}
+
+func mustNewSingleCheckerAnalyzer() *analysis.Analyzer {
+	a, err := funcguard.NewAnalyzer(funcguard.WithCmdlineFlags())
+	if err != nil {
+		panic("creating analyzer failed: " + err.Error())
+	}
+
+	return a.Analyzer
 }
