@@ -98,7 +98,7 @@ func (a *Analyzer) run(pass *analysis.Pass) (any, error) {
 func (a *Analyzer) parseCmdLineArgs() error {
 	if a.cmdLineFlags.writeCfgPath != "" {
 		a.doNothing = true
-		if err := defaultConfig.writeToFile(a.writeCfgPath); err != nil {
+		if err := defaultConfig.writeToFile(a.cmdLineFlags.writeCfgPath); err != nil {
 			return err
 		}
 
