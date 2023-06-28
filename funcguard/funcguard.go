@@ -141,10 +141,6 @@ func (a *Analyzer) setConfig() error {
 }
 
 func (a *Analyzer) analyze(pass *analysis.Pass) (any, error) {
-	if !filesImportDatabaseSQL(pass.Pkg) {
-		return nil, nil
-	}
-
 	for _, f := range pass.Files {
 		ast.Inspect(f, func(n ast.Node) bool {
 			if n == nil {
@@ -171,16 +167,6 @@ func (a *Analyzer) analyze(pass *analysis.Pass) (any, error) {
 func (a *Analyzer) isAllowed(fullFuncName string) (allowed bool, errorMsg string) {
 	errorMsg, exists := a.rules[fullFuncName]
 	return !exists, errorMsg
-}
-
-func filesImportDatabaseSQL(pkg *types.Package) bool {
-	for _, importStmt := range pkg.Imports() {
-		if importStmt.Path() == "database/sql" {
-			return true
-		}
-	}
-
-	return false
 }
 
 func toFuncCall(n ast.Node, typesInfo *types.Info) (ast.Node, *types.Func) {
