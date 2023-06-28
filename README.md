@@ -12,7 +12,7 @@ context-aware functions exist.
 ## Installation
 
 ```sh
-go install github.com/simplesurance/funcguard@latest
+go install github.com/simplesurance/funcguard/cmd/funcguard@latest
 ```
 
 ## Configuration
