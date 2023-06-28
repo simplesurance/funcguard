@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	_ "net/http/pprof"
 
 	"github.com/simplesurance/funcguard/funcguard"
@@ -14,7 +15,7 @@ func main() {
 }
 
 func mustNewSingleCheckerAnalyzer() *analysis.Analyzer {
-	a, err := funcguard.NewAnalyzer(funcguard.WithCmdlineFlags())
+	a, err := funcguard.NewAnalyzer(funcguard.WithCmdlineFlags(), funcguard.WithLogger(log.Printf))
 	if err != nil {
 		panic("creating analyzer failed: " + err.Error())
 	}

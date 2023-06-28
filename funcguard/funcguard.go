@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"go/ast"
 	"go/types"
-	"log"
 	"sync"
 
 	"golang.org/x/tools/go/analysis"
@@ -22,7 +21,11 @@ type Analyzer struct {
 
 	doNothing bool
 	lock      sync.Mutex
+
+	logf LogFunc
 }
+
+type LogFunc func(format string, a ...any)
 
 func NewAnalyzer(opts ...Option) (*Analyzer, error) {
 	result := Analyzer{
@@ -31,6 +34,7 @@ func NewAnalyzer(opts ...Option) (*Analyzer, error) {
 			Doc:  "Report usages of prohibited functions",
 			URL:  "https://github.com/simplesurance/funcguard",
 		},
+		logf: func(string, ...any) {},
 	}
 
 	for _, opt := range opts {
@@ -43,7 +47,7 @@ func NewAnalyzer(opts ...Option) (*Analyzer, error) {
 
 	if !result.parseCmdLineFlags && (result.cfg == nil || len(result.cfg.Rules) == 0) {
 		result.cfg = &defaultConfig
-		log.Printf("Using default config")
+		result.logf("Using default config")
 	}
 
 	if result.cfg != nil {
@@ -97,7 +101,7 @@ func (a *Analyzer) parseCmdLineArgs() error {
 			return err
 		}
 
-		log.Printf("Wrote default config to %s", a.writeCfgPath)
+		a.logf("Wrote default config to %s", a.writeCfgPath)
 		return nil
 	}
 
@@ -120,11 +124,11 @@ func (a *Analyzer) setConfig() error {
 		if err != nil {
 			return err
 		}
-		log.Printf("Loaded config from %s", a.configPath)
+		a.logf("Loaded config from %s", a.configPath)
 
 	} else {
 		cfg = &defaultConfig
-		log.Printf("Using default config")
+		a.logf("Using default config")
 	}
 
 	cfgMap, err := cfgToRuleMap(cfg)

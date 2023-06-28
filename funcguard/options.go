@@ -1,6 +1,8 @@
 package funcguard
 
-import "flag"
+import (
+	"flag"
+)
 
 type Option func(*Analyzer)
 
@@ -18,5 +20,11 @@ func WithCmdlineFlags() Option {
 func WithConfig(cfg *Config) Option {
 	return func(a *Analyzer) {
 		a.cfg = cfg
+	}
+}
+
+func WithLogger(logFn LogFunc) Option {
+	return func(a *Analyzer) {
+		a.logf = logFn
 	}
 }
