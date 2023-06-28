@@ -41,7 +41,7 @@ func NewAnalyzer(opts ...Option) (*Analyzer, error) {
 		return nil, fmt.Errorf("only one of WithConfig() or WithCmdlineFlags() can be passed")
 	}
 
-	if result.cfg == nil && !result.parseCmdLineFlags {
+	if len(result.cfg.Rules) == 0 && !result.parseCmdLineFlags {
 		result.cfg = &defaultConfig
 		log.Printf("Using default config")
 	}
