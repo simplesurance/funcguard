@@ -17,7 +17,6 @@ func basic() {
 	db.Prepare("")                 // want "use context-aware method PrepareContext instead of Prepare"
 	db.Query("")                   // want "use context-aware method QueryContext instead of Query"
 	db.QueryRow("")                // want "use context-aware method QueryRowContext instead of QueryRow"
-
 }
 
 func withAssignment() {

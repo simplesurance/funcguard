@@ -9,8 +9,8 @@ import (
 )
 
 type Rule struct {
-	Function string `yaml:"function"`
-	Error    string `yaml:"error"`
+	FunctionPath string `yaml:"function-path"`
+	ErrorMsg     string `yaml:"error-msg"`
 }
 
 type Config struct {
@@ -19,26 +19,26 @@ type Config struct {
 
 var defaultConfig = Config{
 	Rules: []*Rule{
-		{Function: "(*database/sql.DB).Begin", Error: "use context-aware method BeginTx instead of Begin"},
-		{Function: "(*database/sql.DB).Exec", Error: "use context-aware method ExecContext instead of Exec"},
-		{Function: "(*database/sql.DB).Ping", Error: "use context-aware method PingContext instead of Ping"},
-		{Function: "(*database/sql.DB).Prepare", Error: "use context-aware method PrepareContext instead of Prepare"},
-		{Function: "(*database/sql.DB).Query", Error: "use context-aware method QueryContext instead of Query"},
-		{Function: "(*database/sql.DB).QueryRow", Error: "use context-aware method QueryRowContext instead of QueryRow"},
-		{Function: "(*database/sql.Tx).Exec", Error: "use context-aware method ExecContext instead of Exec"},
-		{Function: "(*database/sql.Tx).Prepare", Error: "use context-aware method PrepareContext instead of Prepare"},
-		{Function: "(*database/sql.Tx).Query", Error: "use context-aware method QueryContext instead of Query"},
-		{Function: "(*database/sql.Tx).QueryRow", Error: "use context-aware method QueryRowContext instead of QueryRow"},
-		{Function: "(*database/sql.Tx).Stmt", Error: "use context-aware method StmtContext instead of Stmt"},
+		{FunctionPath: "(*database/sql.DB).Begin", ErrorMsg: "use context-aware method BeginTx instead of Begin"},
+		{FunctionPath: "(*database/sql.DB).Exec", ErrorMsg: "use context-aware method ExecContext instead of Exec"},
+		{FunctionPath: "(*database/sql.DB).Ping", ErrorMsg: "use context-aware method PingContext instead of Ping"},
+		{FunctionPath: "(*database/sql.DB).Prepare", ErrorMsg: "use context-aware method PrepareContext instead of Prepare"},
+		{FunctionPath: "(*database/sql.DB).Query", ErrorMsg: "use context-aware method QueryContext instead of Query"},
+		{FunctionPath: "(*database/sql.DB).QueryRow", ErrorMsg: "use context-aware method QueryRowContext instead of QueryRow"},
+		{FunctionPath: "(*database/sql.Tx).Exec", ErrorMsg: "use context-aware method ExecContext instead of Exec"},
+		{FunctionPath: "(*database/sql.Tx).Prepare", ErrorMsg: "use context-aware method PrepareContext instead of Prepare"},
+		{FunctionPath: "(*database/sql.Tx).Query", ErrorMsg: "use context-aware method QueryContext instead of Query"},
+		{FunctionPath: "(*database/sql.Tx).QueryRow", ErrorMsg: "use context-aware method QueryRowContext instead of QueryRow"},
+		{FunctionPath: "(*database/sql.Tx).Stmt", ErrorMsg: "use context-aware method StmtContext instead of Stmt"},
 
-		{Function: "net/http.Get", Error: "use context-aware http.NewRequestWithContext method instead"},
-		{Function: "net/http.Head", Error: "use context-aware http.NewRequestWithContext method instead"},
-		{Function: "net/http.Post", Error: "use context-aware http.NewRequestWithContext method instead"},
-		{Function: "net/http.PostForm", Error: "use context-aware http.NewRequestWithContext method instead"},
-		{Function: "(*net/http.Client).Get", Error: "use context-aware http.NewRequestWithContext method instead"},
-		{Function: "(*net/http.Client).Head", Error: "use context-aware http.NewRequestWithContext method instead"},
-		{Function: "(*net/http.Client).Post", Error: "use context-aware http.NewRequestWithContext method instead"},
-		{Function: "(*net/http.Client).PostForm", Error: "use context-aware http.NewRequestWithContext method instead"},
+		{FunctionPath: "net/http.Get", ErrorMsg: "use context-aware http.NewRequestWithContext method instead"},
+		{FunctionPath: "net/http.Head", ErrorMsg: "use context-aware http.NewRequestWithContext method instead"},
+		{FunctionPath: "net/http.Post", ErrorMsg: "use context-aware http.NewRequestWithContext method instead"},
+		{FunctionPath: "net/http.PostForm", ErrorMsg: "use context-aware http.NewRequestWithContext method instead"},
+		{FunctionPath: "(*net/http.Client).Get", ErrorMsg: "use context-aware http.NewRequestWithContext method instead"},
+		{FunctionPath: "(*net/http.Client).Head", ErrorMsg: "use context-aware http.NewRequestWithContext method instead"},
+		{FunctionPath: "(*net/http.Client).Post", ErrorMsg: "use context-aware http.NewRequestWithContext method instead"},
+		{FunctionPath: "(*net/http.Client).PostForm", ErrorMsg: "use context-aware http.NewRequestWithContext method instead"},
 	},
 }
 
@@ -79,16 +79,16 @@ func configFromFile(path string) (*Config, error) {
 func cfgToRuleMap(cfg *Config) (map[string]string, error) {
 	result := make(map[string]string, len(cfg.Rules))
 	for _, rule := range cfg.Rules {
-		if _, exist := result[rule.Function]; exist {
-			return nil, fmt.Errorf("duplicate rule for function %s", rule.Function)
+		if _, exist := result[rule.FunctionPath]; exist {
+			return nil, fmt.Errorf("duplicate rule for function %s", rule.FunctionPath)
 		}
 
-		if rule.Error != "" {
-			result[rule.Function] = rule.Error
+		if rule.ErrorMsg != "" {
+			result[rule.FunctionPath] = rule.ErrorMsg
 			continue
 		}
 
-		result[rule.Function] = fmt.Sprintf("use of function %s is forbidden", rule.Function)
+		result[rule.FunctionPath] = fmt.Sprintf("use of function %s is forbidden", rule.FunctionPath)
 	}
 
 	return result, nil

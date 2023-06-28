@@ -1,9 +1,9 @@
 package funcguard
 
 import (
+	"fmt"
 	"go/ast"
 	"go/types"
-	"log"
 	"sync"
 
 	"golang.org/x/tools/go/analysis"
@@ -12,29 +12,58 @@ import (
 
 type Analyzer struct {
 	*analysis.Analyzer
+	cfg   *Config
 	rules map[string]string
 
-	parseCmdLineArgsExecuted bool
-	doNothing                bool
-	lock                     sync.Mutex
-	cmdlineParams            *cmdlineParams
+	parseCmdLineFlags bool
+	writeCfgPath      string
+	configPath        string
+
+	doNothing bool
+	lock      sync.Mutex
+
+	logf LogFunc
 }
 
-func NewAnalyzer() *Analyzer {
-	params := newCmdlineParams()
+type LogFunc func(format string, a ...any)
 
+func NewAnalyzer(opts ...Option) (*Analyzer, error) {
 	result := Analyzer{
 		Analyzer: &analysis.Analyzer{
-			Name:  "funcguard",
-			Doc:   "Report usages of prohibited functions",
-			URL:   "https://github.com/simplesurance/funcguard",
-			Flags: *params.flagSet,
+			Name: "funcguard",
+			Doc:  "Report usages of prohibited functions",
+			URL:  "https://github.com/simplesurance/funcguard",
 		},
-		cmdlineParams: params,
+		logf: func(string, ...any) {},
 	}
+
+	for _, opt := range opts {
+		opt(&result)
+	}
+
+	if result.cfg != nil && result.parseCmdLineFlags {
+		return nil, fmt.Errorf("only one of WithConfig() or WithCmdlineFlags() can be passed")
+	}
+
+	if result.configPath == "" && (result.cfg == nil || len(result.cfg.Rules) == 0) {
+		result.cfg = &defaultConfig
+		result.logf("Using default config")
+	}
+
+	if result.cfg != nil {
+		var err error
+		result.rules, err = cfgToRuleMap(result.cfg)
+		if err != nil {
+			return nil, err
+		}
+		result.cfg = nil // not needed anymore
+	}
+
 	result.Analyzer.Run = result.run
-	return &result
+
+	return &result, nil
 }
+
 func (a *Analyzer) run(pass *analysis.Pass) (any, error) {
 	// SingleChecker does not support to register flags and handle them before the Analyzer is run.
 	// The only way to handle our own flags is in this run() method which is invoked multiple times.
@@ -47,10 +76,10 @@ func (a *Analyzer) run(pass *analysis.Pass) (any, error) {
 	// the default config to a file without a package spec, is not
 	// possible.
 	// Refactor this after: https://github.com/golang/go/issues/53336
-	a.lock.Lock()
-	if !a.parseCmdLineArgsExecuted {
+	a.lock.Lock() // TODO: is the lock needed? Is run called in parallel?
+	if a.parseCmdLineFlags {
+		a.parseCmdLineFlags = false
 		err := a.parseCmdLineArgs()
-		a.parseCmdLineArgsExecuted = true
 		if err != nil {
 			a.lock.Unlock()
 			return nil, err
@@ -66,19 +95,20 @@ func (a *Analyzer) run(pass *analysis.Pass) (any, error) {
 }
 
 func (a *Analyzer) parseCmdLineArgs() error {
-	if a.cmdlineParams.writeCfgPath != "" {
+	if a.writeCfgPath != "" {
 		a.doNothing = true
-		if err := defaultConfig.writeToFile(a.cmdlineParams.writeCfgPath); err != nil {
+		if err := defaultConfig.writeToFile(a.writeCfgPath); err != nil {
 			return err
 		}
 
-		log.Printf("Wrote default config to %s", a.cmdlineParams.writeCfgPath)
+		a.logf("Wrote default config to %s", a.writeCfgPath)
 		return nil
 	}
 
-	if err := a.setConfig(); err != nil {
-		a.doNothing = true
-		return err
+	if a.configPath != "" {
+		if err := a.setConfig(); err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -86,16 +116,18 @@ func (a *Analyzer) parseCmdLineArgs() error {
 
 func (a *Analyzer) setConfig() error {
 	var cfg *Config
-	if a.cmdlineParams.cfgPath == "" {
-		cfg = &defaultConfig
-		log.Printf("Using default config")
-	} else {
+
+	if a.configPath != "" {
 		var err error
-		cfg, err = configFromFile(a.cmdlineParams.cfgPath)
+		cfg, err = configFromFile(a.configPath)
 		if err != nil {
 			return err
 		}
-		log.Printf("Loaded config from %s", a.cmdlineParams.cfgPath)
+		a.logf("Loaded config from %s", a.configPath)
+
+	} else {
+		cfg = &defaultConfig
+		a.logf("Using default config")
 	}
 
 	cfgMap, err := cfgToRuleMap(cfg)
@@ -108,10 +140,6 @@ func (a *Analyzer) setConfig() error {
 }
 
 func (a *Analyzer) analyze(pass *analysis.Pass) (any, error) {
-	if !filesImportDatabaseSQL(pass.Pkg) {
-		return nil, nil
-	}
-
 	for _, f := range pass.Files {
 		ast.Inspect(f, func(n ast.Node) bool {
 			if n == nil {
@@ -138,16 +166,6 @@ func (a *Analyzer) analyze(pass *analysis.Pass) (any, error) {
 func (a *Analyzer) isAllowed(fullFuncName string) (allowed bool, errorMsg string) {
 	errorMsg, exists := a.rules[fullFuncName]
 	return !exists, errorMsg
-}
-
-func filesImportDatabaseSQL(pkg *types.Package) bool {
-	for _, importStmt := range pkg.Imports() {
-		if importStmt.Path() == "database/sql" {
-			return true
-		}
-	}
-
-	return false
 }
 
 func toFuncCall(n ast.Node, typesInfo *types.Info) (ast.Node, *types.Func) {
