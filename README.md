@@ -15,6 +15,12 @@ context-aware functions exist.
 go install github.com/simplesurance/funcguard/cmd/funcguard@latest
 ```
 
+## Execution
+
+```sh
+funcguard ./...
+```
+
 ## Configuration
 
 ### Create the Default Configuration File
@@ -70,7 +76,7 @@ rules:
       error-msg: use context-aware http.NewRequestWithContext method instead
 ```
 
-### Run with Custom Rules from Configuration Files
+### Execution with Custom Rules from Configuration Files
 
 ```sh
 funcguard -config funcguard.yml ./...
