@@ -118,7 +118,7 @@ func (a *Analyzer) setConfig() error {
 		if err != nil {
 			return err
 		}
-		a.logf("Loaded config from %s", a.configPath)
+		a.logf("Loaded config from %s", a.cmdLineFlags.configPath)
 
 	} else {
 		cfg = &defaultConfig
