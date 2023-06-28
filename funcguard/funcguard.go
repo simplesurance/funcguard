@@ -114,7 +114,7 @@ func (a *Analyzer) setConfig() error {
 
 	if a.configPath != "" {
 		var err error
-		cfg, err = configFromFile(a.configPath)
+		cfg, err = configFromFile(a.cmdLineFlags.configPath)
 		if err != nil {
 			return err
 		}
