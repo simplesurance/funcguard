@@ -77,7 +77,7 @@ func (a *Analyzer) run(pass *analysis.Pass) (any, error) {
 	// the default config to a file without a package spec, is not
 	// possible.
 	// Refactor this after: https://github.com/golang/go/issues/53336
-	a.lock.Lock() // TODO: is the lock needed? Is run called in parallel?
+	a.lock.Lock()
 	if a.cmdLineFlags.parseFlags {
 		a.cmdLineFlags.parseFlags = false
 		err := a.parseCmdLineArgs()
