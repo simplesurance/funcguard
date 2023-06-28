@@ -112,7 +112,7 @@ func (a *Analyzer) parseCmdLineArgs() error {
 func (a *Analyzer) setConfig() error {
 	var cfg *Config
 
-	if a.configPath != "" {
+	if a.cmdLineFlags.configPath != "" {
 		var err error
 		cfg, err = configFromFile(a.cmdLineFlags.configPath)
 		if err != nil {
