@@ -33,42 +33,42 @@ funcguard -config funcguard.yml ./...
 
 ```yaml
 rules:
-    - function: (*database/sql.DB).Begin
-      error: use context-aware method BeginTx instead of Begin
-    - function: (*database/sql.DB).Exec
-      error: use context-aware method ExecContext instead of Exec
-    - function: (*database/sql.DB).Ping
-      error: use context-aware method PingContext instead of Ping
-    - function: (*database/sql.DB).Prepare
-      error: use context-aware method PrepareContext instead of Prepare
-    - function: (*database/sql.DB).Query
-      error: use context-aware method QueryContext instead of Query
-    - function: (*database/sql.DB).QueryRow
-      error: use context-aware method QueryRowContext instead of QueryRow
-    - function: (*database/sql.Tx).Exec
-      error: use context-aware method ExecContext instead of Exec
-    - function: (*database/sql.Tx).Prepare
-      error: use context-aware method PrepareContext instead of Prepare
-    - function: (*database/sql.Tx).Query
-      error: use context-aware method QueryContext instead of Query
-    - function: (*database/sql.Tx).QueryRow
-      error: use context-aware method QueryRowContext instead of QueryRow
-    - function: (*database/sql.Tx).Stmt
-      error: use context-aware method StmtContext instead of Stmt
-    - function: net/http.Get
-      error: use context-aware http.NewRequestWithContext method instead
-    - function: net/http.Head
-      error: use context-aware http.NewRequestWithContext method instead
-    - function: net/http.Post
-      error: use context-aware http.NewRequestWithContext method instead
-    - function: net/http.PostForm
-      error: use context-aware http.NewRequestWithContext method instead
-    - function: (*net/http.Client).Get
-      error: use context-aware http.NewRequestWithContext method instead
-    - function: (*net/http.Client).Head
-      error: use context-aware http.NewRequestWithContext method instead
-    - function: (*net/http.Client).Post
-      error: use context-aware http.NewRequestWithContext method instead
-    - function: (*net/http.Client).PostForm
-      error: use context-aware http.NewRequestWithContext method instead
+    - function-path: (*database/sql.DB).Begin
+      error-msg: use context-aware method BeginTx instead of Begin
+    - function-path: (*database/sql.DB).Exec
+      error-msg: use context-aware method ExecContext instead of Exec
+    - function-path: (*database/sql.DB).Ping
+      error-msg: use context-aware method PingContext instead of Ping
+    - function-path: (*database/sql.DB).Prepare
+      error-msg: use context-aware method PrepareContext instead of Prepare
+    - function-path: (*database/sql.DB).Query
+      error-msg: use context-aware method QueryContext instead of Query
+    - function-path: (*database/sql.DB).QueryRow
+      error-msg: use context-aware method QueryRowContext instead of QueryRow
+    - function-path: (*database/sql.Tx).Exec
+      error-msg: use context-aware method ExecContext instead of Exec
+    - function-path: (*database/sql.Tx).Prepare
+      error-msg: use context-aware method PrepareContext instead of Prepare
+    - function-path: (*database/sql.Tx).Query
+      error-msg: use context-aware method QueryContext instead of Query
+    - function-path: (*database/sql.Tx).QueryRow
+      error-msg: use context-aware method QueryRowContext instead of QueryRow
+    - function-path: (*database/sql.Tx).Stmt
+      error-msg: use context-aware method StmtContext instead of Stmt
+    - function-path: net/http.Get
+      error-msg: use context-aware http.NewRequestWithContext method instead
+    - function-path: net/http.Head
+      error-msg: use context-aware http.NewRequestWithContext method instead
+    - function-path: net/http.Post
+      error-msg: use context-aware http.NewRequestWithContext method instead
+    - function-path: net/http.PostForm
+      error-msg: use context-aware http.NewRequestWithContext method instead
+    - function-path: (*net/http.Client).Get
+      error-msg: use context-aware http.NewRequestWithContext method instead
+    - function-path: (*net/http.Client).Head
+      error-msg: use context-aware http.NewRequestWithContext method instead
+    - function-path: (*net/http.Client).Post
+      error-msg: use context-aware http.NewRequestWithContext method instead
+    - function-path: (*net/http.Client).PostForm
+      error-msg: use context-aware http.NewRequestWithContext method instead
 ```
