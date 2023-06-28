@@ -2,6 +2,9 @@
 
 funcguard is a configurable Golang linter that reports the usage of specific
 functions. \
+Functions are identified by their full path. Usage of those functions is
+also identified if the package is imported with a different identifier, or their
+types are embedded into other structs. \
 By default, it reports the use of functions without a context
 parameter from the `database/sql` and `net/http` packages where equivalent
 context-aware functions exist.
