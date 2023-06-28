@@ -78,8 +78,8 @@ func (a *Analyzer) run(pass *analysis.Pass) (any, error) {
 	// possible.
 	// Refactor this after: https://github.com/golang/go/issues/53336
 	a.lock.Lock() // TODO: is the lock needed? Is run called in parallel?
-	if a.parseCmdLineFlags {
-		a.parseCmdLineFlags = false
+	if a.cmdLineFlags.parseFlags {
+		a.cmdLineFlags.parseFlags = false
 		err := a.parseCmdLineArgs()
 		if err != nil {
 			a.lock.Unlock()
