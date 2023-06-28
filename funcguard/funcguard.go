@@ -102,7 +102,7 @@ func (a *Analyzer) parseCmdLineArgs() error {
 			return err
 		}
 
-		a.logf("Wrote default config to %s", a.writeCfgPath)
+		a.logf("Wrote default config to %s", a.cmdLineFlags.writeCfgPath)
 		return nil
 	}
 
