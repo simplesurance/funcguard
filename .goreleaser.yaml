@@ -22,8 +22,15 @@ archives:
     - 'NONE*'
 checksum:
  name_template: 'checksums.txt'
-snapshot:
- name_template: "{{ incpatch .Version }}-next"
+signs:
+ - artifacts: checksum
+   args:
+    - "--local-user"
+    - "0xC8B381683DBCEDFE"
+    - "--output"
+    - "${signature}"
+    - "--detach-sign"
+    - "${artifact}"
 changelog:
  skip: false
  sort: asc
