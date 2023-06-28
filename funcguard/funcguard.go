@@ -106,13 +106,7 @@ func (a *Analyzer) parseCmdLineArgs() error {
 		return nil
 	}
 
-	if a.configPath != "" {
-		if err := a.setConfig(); err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return a.setConfig()
 }
 
 func (a *Analyzer) setConfig() error {
