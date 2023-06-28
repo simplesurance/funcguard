@@ -12,7 +12,7 @@ context-aware functions exist.
 ## Installation
 
 Either download & extract an archive from the
-[Release Page](https://github.com/simplesurance/funcguard/releases) or install
+[Releases page](https://github.com/simplesurance/funcguard/releases) or install
 it via `go install`:
 
 ```sh
