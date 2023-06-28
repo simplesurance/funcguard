@@ -1,7 +1,6 @@
 package funcguard
 
 import (
-	"fmt"
 	"go/ast"
 	"go/types"
 	"sync"
