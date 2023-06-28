@@ -8,7 +8,7 @@ type Option func(*Analyzer)
 
 func WithCmdlineFlags() Option {
 	return func(a *Analyzer) {
-		a.parseCmdLineFlags = true
+		a.cmdLineFlags.parseFlags = true
 
 		flagSet := flag.NewFlagSet("", flag.ExitOnError)
 		flagSet.StringVar(&a.writeCfgPath, "write-cfg", "", "Write the default config to the given path and exit (package argument must still be passed, but is ignored).")
